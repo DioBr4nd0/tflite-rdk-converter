@@ -1,0 +1,19 @@
+v1.1.74: Pulling from openexplorer/ai_toolchain_ubuntu_20_j5_gpu
+4851dd463f20: Pulling fs layer
+5ea3f5ea769b: Pulling fs layer
+e6c2007991d9: Pulling fs layer
+fbf7973f4f5c: Pulling fs layer
+9c8528178814: Pulling fs layer
+4851dd463f20: Already exists
+5ea3f5ea769b: Already exists
+e6c2007991d9: Already exists
+fbf7973f4f5c: Download complete
+9c8528178814: Download complete
+9c8528178814: Pull complete
+fbf7973f4f5c: Pull complete
+5ea3f5ea769b: Pull complete
+e6c2007991d9: Pull complete
+4851dd463f20: Pull complete
+Digest: sha256:f359791b690e07bf28e808d0cb249666a747eaf5d3dd968e946da91fe371a353
+Status: Downloaded newer image for openexplorer/ai_toolchain_ubuntu_20_j5_gpu:v1.1.74
+docker.io/openexplorer/ai_toolchain_ubuntu_20_j5_gpu:v1.1.74

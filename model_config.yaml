@@ -1,0 +1,61 @@
+# Model Conversion Configuration for Horizon X5 BPU
+# This configuration file defines the parameters for converting TFLite model to BPU format
+
+model_parameters:
+  # Path to the input TFLite model
+  model_file: "models/face_landmark.tflite"
+  
+  # Model type
+  model_type: "tflite"
+  
+  # Output directory for converted model
+  output_dir: "output"
+  
+  # Output model name
+  output_name: "face_landmark_bpu"
+
+input_parameters:
+  # Input tensor information
+  # Adjust these parameters according to your model's requirements
+  input_name: "input"
+  input_shape: [1, 192, 192, 3]  # [batch, height, width, channels] - adjust as needed
+  input_type_train: "rgb"
+  input_type_rt: "nv12"  # Runtime input format for RDK X5
+  input_layout_train: "NHWC"
+  input_layout_rt: "NHWC"
+  
+  # Normalization parameters (adjust based on your model's preprocessing)
+  norm_type: "data_scale"
+  scale_value: 127.5
+  mean_value: 127.5
+
+calibration_parameters:
+  # Calibration method for quantization
+  calibration_type: "default"
+  
+  # Maximum number of samples for calibration
+  max_percentile: 0.99999
+  
+  # Calibration data directory (if using custom calibration data)
+  # calibration_data: "calibration"
+
+compiler_parameters:
+  # Optimization level
+  optimize: 3
+  
+  # Debug mode
+  debug: false
+  
+  # Core number for compilation
+  core_num: 2
+  
+  # Target architecture
+  march: "bernoulli2"  # X5 uses Bernoulli2 architecture
+
+output_parameters:
+  # Output format
+  output_type: "float32"
+  
+  # Whether to generate HBM model
+  generate_hbm: true
+

@@ -1,0 +1,42 @@
+# Docker ignore file for Horizon X5 Toolchain
+
+# Git
+.git
+.gitignore
+
+# Documentation
+*.md
+
+# Scripts (we'll mount these)
+*.sh
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Output directories (we'll mount these)
+output/
+calibration/
+
+# Don't ignore the model
+!face_landmark.tflite
+!models/
+

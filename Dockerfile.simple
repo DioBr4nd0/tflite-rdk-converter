@@ -1,0 +1,24 @@
+# Dockerfile for Horizon X5 Model Conversion - Lightweight Version
+FROM python:3.9-slim
+
+# Prevent interactive prompts
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    wget \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python packages
+RUN pip3 install --no-cache-dir \
+    numpy==1.23.5 \
+    tensorflow==2.12.0 \
+    onnx==1.14.0 \
+    tf2onnx==1.16.1
+
+# Create workspace
+WORKDIR /workspace
+
+CMD ["/bin/bash"]
+

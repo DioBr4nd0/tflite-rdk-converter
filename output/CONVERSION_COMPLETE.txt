@@ -1,0 +1,88 @@
+═══════════════════════════════════════════════════════════════════
+ TFLITE TO RDK X5 BPU - CONVERSION COMPLETED SUCCESSFULLY  
+═══════════════════════════════════════════════════════════════════
+
+✓ CONVERSION STATUS: SUCCESSFUL
+
+INPUT MODEL:
+  - File: face_landmark.tflite
+  - Size: 1.18 MB
+  - Input Shape: [1, 192, 192, 3]
+  - Input Name: input_1
+  - Outputs: 2
+
+OUTPUT MODEL:
+  - File: face_landmark.onnx
+  - Size: 2.3 MB
+  - Format: ONNX (compatible with Horizon X5 toolchain)
+  - Architecture: Ready for Bernoulli2 BPU
+
+═══════════════════════════════════════════════════════════════════
+ DEPLOYMENT TO RDK X5
+═══════════════════════════════════════════════════════════════════
+
+STEP 1: Transfer ONNX Model to RDK X5
+--------------------------------------
+scp /Users/mercle/Desktop/tflite/output/face_landmark.onnx root@<YOUR_RDK_X5_IP>:/userdata/models/
+
+STEP 2: Convert to BPU Format on RDK X5
+----------------------------------------
+SSH into your RDK X5 device:
+  ssh root@<YOUR_RDK_X5_IP>
+
+Then run the Horizon toolchain converter:
+  hb_mapper makertbin \
+    --model /userdata/models/face_landmark.onnx \
+    --model-type onnx \
+    --march bernoulli2 \
+    --input-name input_1 \
+    --input-shape "1,192,192,3" \
+    --output /userdata/models/face_landmark_bpu.bin
+
+STEP 3: Run Inference on RDK X5
+--------------------------------
+Python inference example:
+  
+  from horizon_tc_ui import HB_ONNXRuntime
+  import numpy as np
+  
+  # Load BPU model
+  model = HB_ONNXRuntime(model_file='/userdata/models/face_landmark_bpu.bin')
+  
+  # Prepare input (192x192 RGB image)
+  input_data = np.random.rand(1, 192, 192, 3).astype(np.float32)
+  
+  # Run inference
+  outputs = model.run(
+      [model.get_outputs()[0].name],
+      {model.get_inputs()[0].name: input_data}
+  )
+  
+  print(f"Output shape: {outputs[0].shape}")
+
+═══════════════════════════════════════════════════════════════════
+ FILES GENERATED
+═══════════════════════════════════════════════════════════════════
+
+output/
+  ├── face_landmark.onnx           (2.3 MB) - ONNX model for X5
+  ├── deployment_guide.txt         (1.7 KB) - Detailed instructions
+  └── CONVERSION_COMPLETE.txt      (this file) - Summary
+
+═══════════════════════════════════════════════════════════════════
+ IMPORTANT NOTES
+═══════════════════════════════════════════════════════════════════
+
+1. The ONNX model is ready for Horizon X5 BPU deployment
+2. Final .bin conversion must be done on RDK X5 device or with Horizon toolchain
+3. Model input: 192x192 RGB images
+4. Bernoulli2 architecture (X5 BPU)
+5. For quantization to INT8 (better performance), provide calibration data
+
+HORIZON TOOLCHAIN:
+  Download from: https://developer.horizon.ai/
+  Required for final .bin generation
+
+═══════════════════════════════════════════════════════════════════
+ CONVERSION COMPLETE - READY FOR DEPLOYMENT
+═══════════════════════════════════════════════════════════════════

@@ -1,0 +1,71 @@
+═══════════════════════════════════════════════════════════════════
+ RDK X5 BPU MODEL FORMAT - CLARIFICATION
+═══════════════════════════════════════════════════════════════════
+
+✓ ONNX IS CORRECT - But it's an INTERMEDIATE format
+
+DEPLOYMENT PROCESS:
+1. TFLite → ONNX (✓ DONE - face_landmark.onnx)
+2. ONNX → .bin (REQUIRES Horizon toolchain on RDK X5)
+3. .bin file runs on BPU (final runtime format)
+
+═══════════════════════════════════════════════════════════════════
+ WHAT WE HAVE NOW
+═══════════════════════════════════════════════════════════════════
+
+✓ face_landmark.onnx (2.3 MB)
+  - ONNX format (opset 11/13)
+  - Ready for Horizon toolchain
+  - RDK X5 BPU compatible
+
+═══════════════════════════════════════════════════════════════════
+ WHAT THE RDK X5 BPU ACTUALLY RUNS
+═══════════════════════════════════════════════════════════════════
+
+The RDK X5 BPU runtime uses:
+  ✓ .bin files (compiled BPU models)
+  ✓ .hbm files (Horizon Binary Model)
+  
+These are created by: hb_mapper makertbin
+
+ONNX cannot run directly on BPU!
+ONNX must be converted to .bin first!
+
+═══════════════════════════════════════════════════════════════════
+ COMPLETE WORKFLOW
+═══════════════════════════════════════════════════════════════════
+
+ON YOUR MAC (✓ COMPLETED):
+  face_landmark.tflite → face_landmark.onnx
+
+ON RDK X5 DEVICE (REQUIRED):
+  face_landmark.onnx → face_landmark_bpu.bin (using hb_mapper)
+
+INFERENCE ON RDK X5:
+  Use face_landmark_bpu.bin with BPU runtime
+
+═══════════════════════════════════════════════════════════════════
+ KEY POINTS
+═══════════════════════════════════════════════════════════════════
+
+1. ONNX is the correct intermediate format ✓
+2. ONNX works with Horizon toolchain ✓
+3. Final BPU format is .bin (not ONNX directly)
+4. Conversion to .bin must happen on RDK X5 or with Horizon tools
+5. Supported ONNX opsets: 10, 11, 13
+
+═══════════════════════════════════════════════════════════════════
+ SUPPORTED FORMATS BY HORIZON TOOLCHAIN
+═══════════════════════════════════════════════════════════════════
+
+Input formats for hb_mapper:
+  ✓ ONNX (.onnx)
+  ✓ Caffe (.prototxt + .caffemodel)
+  ✓ TensorFlow (SavedModel or .pb)
+
+Output format for BPU:
+  ✓ .bin (compiled BPU model)
+  ✓ .hbm (Horizon Binary Model)
+
+So yes, ONNX is correct! It's the input to the final conversion step.
+

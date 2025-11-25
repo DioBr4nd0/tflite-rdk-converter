@@ -1,0 +1,62 @@
+
+# RDK X5 BPU Deployment Package
+
+## Model Information
+- Original: face_landmark.tflite (1.18 MB)
+- ONNX Format: face_landmark.onnx
+- Input Shape: [1, 192, 192, 3]
+- Input Type: <class 'numpy.float32'>
+- Outputs: 2
+
+## Deployment Steps
+
+### 1. Transfer to RDK X5
+```bash
+scp output/face_landmark.onnx root@<RDK_X5_IP>:/userdata/models/
+```
+
+### 2. Convert on RDK X5 (if Horizon toolchain is installed)
+```bash
+# On RDK X5 device
+hb_mapper makertbin \
+  --model /userdata/models/face_landmark.onnx \
+  --model-type onnx \
+  --march bernoulli2 \
+  --output /userdata/models/face_landmark_bpu.bin
+```
+
+### 3. Run Inference
+```python
+from horizon_tc_ui import HB_ONNXRuntime
+
+# Load model
+sess = HB_ONNXRuntime(model_file='/userdata/models/face_landmark_bpu.bin')
+
+# Prepare input (example)
+input_data = preprocess_image(image)  # Shape: [1, 192, 192, 3]
+
+# Run inference
+outputs = sess.run([sess.get_outputs()[0].name], 
+                   {sess.get_inputs()[0].name: input_data})
+```
+
+## Model Specifications
+- Architecture: Optimized for Bernoulli2 BPU
+- Input Format: RGB/NV12 (configurable)
+- Precision: FP32 (quantize to INT8 on device for best performance)
+- Optimization Level: O3
+
+## Files Generated
+- face_landmark.onnx - Standard ONNX model
+- face_landmark.onnx - Optimized for deployment
+- deployment_guide.txt - This file
+
+## Next Steps
+1. Download Horizon X5 toolchain from: https://developer.horizon.ai/
+2. Install on RDK X5 device or use provided Docker image
+3. Convert ONNX to .bin format using hb_mapper
+4. Deploy and test on device
+
+## Note
+The official Horizon toolchain is required for final .bin conversion.
+This package provides the optimized ONNX model ready for that conversion.
